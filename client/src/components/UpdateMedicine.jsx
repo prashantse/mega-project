@@ -71,7 +71,7 @@ const UpdateMedicine = ({ medicines }) => {
     }
 
     // Send data to the server
-    axios.put("http://localhost:3001/api/updateMedicine/"+id, { name, salt, manufacturer, rate, expiryDate, stock, shelf, use })
+    axios.put("http://localhost:3000/api/updateMedicine/"+id, { name, salt, manufacturer, rate, expiryDate, stock, shelf, use })
     .then(result => {
       console.log(result);
       navigate(`/medicines`)})
@@ -80,7 +80,7 @@ const UpdateMedicine = ({ medicines }) => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3001/getmeds/'+id)
+    axios.get('http://localhost:3000/getmeds/'+id)
     .then(result => {console.log(result),
        setName(result.data.name)
        setSalt(result.data.salt)

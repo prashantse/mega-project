@@ -1,7 +1,11 @@
-const mongoose= require('mongoose')
+const mongoose = require('mongoose')
 
 const medicineSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        // unique: true,
+        // required: true
+    },
     salt: String,
     manufacturer: String,
     rate: Number,
@@ -11,5 +15,5 @@ const medicineSchema = new mongoose.Schema({
     use: String,
 })
 
-const medicineModal= mongoose.model("medicineArray",medicineSchema)
+const medicineModal = mongoose.model("medicineArray", medicineSchema)
 module.exports = medicineModal

@@ -1,39 +1,53 @@
 const express = require('express');
 const router = express.Router();
-const Invoice = require('../models/Invoice'); // Assuming you have an Invoice model
-const Medicine = require('../models/medicineArray'); // Assuming you have a Medicine model
+const Medicine = require('../models/medicineArray');
+const Invoice = require('../models/Invoice');
 
-// POST request to save invoice and update medicine stock
-router.post('/api/invoices', async (req, res) => {
-  try {
-    const { customerInfo, selectedMedicines } = req.body;
+router.post('/invoices', async (req, res) => {
+    const { customerName, customerAge, paymentType, medicines } = req.body;
 
-    // Create new invoice
-    const invoice = new Invoice({
-      customerInfo,
-      selectedMedicines,
-      totalAmount: selectedMedicines.reduce((total, item) => {
-        return total + (item.selectedMedicine.rate * item.amount);
-      }, 0)
-    });
+    if (!customerName || !customerAge || !paymentType || !medicines || medicines.length === 0) {
+        return res.status(400).json({ error: 'Please provide all required fields' });
+    }
 
-    // Save invoice to database
-    await invoice.save();
+    try {
+        let totalAmount = 0;
+        const medicineUpdates = medicines.map(async (item) => {
+            const medicine = await Medicine.findById(item.medicine);
+            if (!medicine) {
+                throw new Error(`Medicine with ID ${item.medicine} not found`);
+            }
+            if (medicine.stock < item.amount) {
+                throw new Error(`Insufficient stock for medicine ${medicine.name}`);
+            }
 
-    // Update stock of selected medicines
-    await Promise.all(selectedMedicines.map(async (item) => {
-      const medicine = await Medicine.findById(item.selectedMedicine._id);
-      if (medicine) {
-        medicine.stock -= item.amount;
-        await medicine.save();
-      }
-    }));
+            medicine.stock -= item.amount;
+            totalAmount += item.amount * medicine.rate;
+            await medicine.save();
 
-    res.status(201).json({ message: 'Invoice saved successfully' });
-  } catch (error) {
-    console.error('Error saving invoice:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
+            return {
+                medicine: medicine._id,
+                amount: item.amount,
+            };
+        });
+
+        const updatedMedicines = await Promise.all(medicineUpdates);
+
+        const newInvoice = new Invoice({
+            customerName,
+            customerAge,
+            paymentType,
+            medicines: updatedMedicines,
+            totalAmount,
+        });
+
+        await newInvoice.save();
+
+        res.json(newInvoice);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 module.exports = router;

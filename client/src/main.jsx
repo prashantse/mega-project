@@ -17,7 +17,7 @@ import Search from './components/Search';
 import AlertPage from './components/AlertPage.jsx';
 import axios from 'axios';
 import UpdateMedicine from './components/UpdateMedicine.jsx';
-import GenInvoice from './components/GenInvoice.jsx';
+// import GenInvoice from './components/GenInvoice.jsx';
 import InvoicePage from './components/InvoicePage.jsx'; // Import the new component
 // import image from './components/Images/agra_bg.jpeg';
 
