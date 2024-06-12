@@ -50,4 +50,13 @@ router.post('/invoices', async (req, res) => {
     }
 });
 
+router.get('/', async (req, res) => {
+    try {
+      const invoices = await Invoice.find().populate('medicines.medicine');
+      res.json(invoices);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 module.exports = router;

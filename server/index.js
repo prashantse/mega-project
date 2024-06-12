@@ -9,10 +9,39 @@ const invoiceRoutes = require('./routes/invoices');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const superadminRoutes = require('./routes/superadmin');
+const employeeRoutes = require('./routes/employee');
+const authRoutes = require('./routes/auth');
+
+app.use('/api/superadmin', superadminRoutes);
+app.use('/api/employee', employeeRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/invoices', invoiceRoutes);
  
 // connectDB(); 
 
 mongoose.connect("mongodb+srv://PrashantSharma:prashant123@cluster007.zrel9cq.mongodb.net/RxRelief")
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log(err));
+ 
+// Middleware to verify token
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    return res.status(403).send({ success: false, message: 'No token provided.' });
+  }
+  jwt.verify(token, "ilskbpqUADGQ812QUWJM223ws", (err, decoded) => {
+    if (err) {
+      return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    }
+    req.userId = decoded.id;
+    req.userRole = decoded.role;
+    next();
+  });
+};
+
 app.get('/api/v1/getAllmeds',(req,res)=>{
     medicineModal.find({})
    .then(meds =>res.json(meds) )
@@ -75,6 +104,8 @@ app.put("/api/updatemedicine/:id",(req, res) => {
         }).then(meds =>res.json(meds) )
         .catch(err => res.json(err))
 })
+
+
 app.listen(3000,()=>{
     console.log("Server is running on port 3000");
 })

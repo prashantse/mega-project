@@ -12,3 +12,12 @@
 .buttonns:hover{
     border-bottom: 2px solid orange;
 }
+.header-show {
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .header-hide {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+  }

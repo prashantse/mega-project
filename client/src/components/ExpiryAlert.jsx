@@ -1,4 +1,3 @@
-// ExpiryAlert.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -50,20 +49,30 @@ const ExpiryAlert = ({ medicines }) => {
     return groupedMedicines;
   };
 
-  // Filter medicines that are going to expire within the next two months
-  const currentMonthResults = medicines.filter((medicine) => {
-    const twoMonthsLater = new Date();
-    twoMonthsLater.setMonth(twoMonthsLater.getMonth() + 2);
-    return new Date(medicine.expiryDate) <= twoMonthsLater;
+  // Filter expired medicines
+  const expiredMedicines = medicines.filter((medicine) => {
+    return new Date(medicine.expiryDate) < new Date();
   });
 
-  // Group medicines expiring within two months by month
-  const currentMonthGroupedMedicines = groupByMonth(currentMonthResults);
+  // Filter medicines expiring within the next three months
+  const soonToExpireMedicines = medicines.filter((medicine) => {
+    const threeMonthsLater = new Date();
+    threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+    return new Date(medicine.expiryDate) <= threeMonthsLater;
+  });
+
+  // Group soon-to-expire medicines by month
+  const soonToExpireGroupedMedicines = groupByMonth(soonToExpireMedicines);
+console.log(soonToExpireGroupedMedicines,"soonToExpireGroupedMedicines")
+  // Get current month
+  const currentMonth = new Date().toLocaleString("en-us", {
+    month: "long",
+  });
 
   return (
-    <div className="container mx-auto p-8 ">
+    <div className="container mx-auto p-8">
       <div className="bg-white rounded-md shadow-md p-6">
-        <h2 className="text-3xl font-bold mb-4">Expiry Alert for Next two monts</h2>
+        <h2 className="text-3xl font-bold mb-4">Expiry Alert for Next three months</h2>
         <button
           onClick={handleToggleExpiryInput}
           className="bg-orange-700 text-white py-2 px-4 rounded-lg mb-4 hover:bg-gray-300 transition duration-300 inline-block"
@@ -95,62 +104,45 @@ const ExpiryAlert = ({ medicines }) => {
             </button>
           </div>
         )}
-        <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-          {/* Display medicines expiring within the next two months */}
-          <div className="mb-4">
-            {Object.keys(currentMonthGroupedMedicines).map((month) => (
-              <div key={month} className="mb-2">
-                <h3 className="text-xl font-semibold mb-2">{month}</h3>
-                <ul className="list-none">
-                  {currentMonthGroupedMedicines[month]?.map((medicine) => (
-                    <Link to={`/medicine/${medicine._id}`}>
-                    <li
-                      key={medicine.name}
-                      className="mb-2 bg-orange-400 text-white px-3 py-2 rounded-lg cursor-pointer hover:bg-black"
-                    >
-                      
-                        {medicine.name}
-                      
-                      - Expiry Date: {medicine.expiryDate} -Shelf:{" "}
-                      {medicine.shelf}
-                    </li>
-                    </Link>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
 
-          {/* Display specific search results if available */}
-          {Object.keys(filteredMedicines).length > 0 && (
-            <div className="mb-4">
-              {Object.keys(filteredMedicines).map((month) => (
+        <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+          {/* Display expired medicines */}
+          {expiredMedicines.length > 0 && (
+            <div className="mb-4" style={{border: '2px solid red', padding: '10px'}}>
+              <h3 className="text-xl font-semibold mb-2">Expired Medicines</h3>
+              <ul className="list-none">
+                {expiredMedicines.map((medicine) => (
+                  <Link to={`/medicine/${medicine._id}`} key={medicine._id}>
+                    <li className="mb-2 bg-red-400 text-white px-3 py-2 rounded-lg cursor-pointer hover:bg-black">
+                      {medicine.name} - Expiry Date: {medicine.expiryDate} - Shelf: {medicine.shelf}
+                    </li>
+                  </Link>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Display soon-to-expire medicines for current month and next two months */}
+          {Object.keys(soonToExpireGroupedMedicines).map((month) => {
+            if (month === currentMonth || Object.keys(soonToExpireGroupedMedicines).indexOf(month) < 3) {
+              return (
                 <div key={month} className="mb-2">
                   <h3 className="text-xl font-semibold mb-2">{month}</h3>
                   <ul className="list-none">
-                    {filteredMedicines[month]?.map((medicine) => (
-                      <li
-                        key={medicine.id}
-                        className="mb-2 bg-orange-400 text-white px-3 py-2 rounded-lg cursor-pointer hover:bg-black"
-                      >
-                        <Link to={`/medicine/${medicine.id}`}>
-                          {medicine.name}
-                        {" "}
-                        - Expiry Date: {medicine.expiryDate} -Shelf:{" "}
-                        {medicine.shelf}</Link>
-                      </li>
+                    {soonToExpireGroupedMedicines[month]?.map((medicine) => (
+                      <Link to={`/medicine/${medicine._id}`} key={medicine._id}>
+                        <li className="mb-2 bg-orange-400 text-white px-3 py-2 rounded-lg cursor-pointer hover:bg-black">
+                          {medicine.name} - Expiry Date: {medicine.expiryDate} - Shelf: {medicine.shelf}
+                        </li>
+                      </Link>
                     ))}
                   </ul>
                 </div>
-              ))}
-            </div>
-          )}
+              );
+            }
+            return null;
+          })}
         </div>
-
-        {/* Display message if no specific search results */}
-        {/* {Object.keys(filteredMedicines).length === 0 && (
-          <p>No medicines with expiry dates near the specified date.</p>
-        )} */}
       </div>
     </div>
   );
