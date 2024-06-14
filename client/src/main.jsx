@@ -23,6 +23,7 @@ import LoginPage from './components/LoginPage';
 import RegisterSuperadminPage from './components/RegisterSuperadminPage';
 import AddEmployee from './components/AddEmployeePage.jsx';
 import SuperadminHomePage from './components/SuperadminHomePage';
+import InvoiceSuccess from './components/InvoiceSuccess.jsx';
 // import image from './components/Images/agra_bg.jpeg';
 
 
@@ -50,13 +51,14 @@ const Main = () => {
         <Route path='/alertpage' element={<AlertPage medicines={medicines} />} />
         <Route path='/addNewmedicine'element={ <AddNewMedicine />} />
         {/* <Route path='/geninvoice' element={<GenInvoice  />} /> */}
-        <Route path='/invoice' element={<InvoicePage medicines={medicines} />} />
+        <Route path='/invoice' element={<InvoicePage />} />
         <Route path="/login" element={<LoginPage />} />
           <Route path="/register/superadmin" element={<RegisterSuperadminPage />} />
           {/* <Route path="/add-employee" element={<AddEmployeePage />} /> */}
           <Route path="/invoice" element={<InvoicePage />} />
           <Route path="/superadminhome" element={<SuperadminHomePage />} />
           <Route path="/add-employee" element={<AddEmployee />} />
+          <Route path="/invoice-success" element={<InvoiceSuccess />} />
         <Route path='*' element={<h1>404 Not Found</h1>} />
       </Route>
       

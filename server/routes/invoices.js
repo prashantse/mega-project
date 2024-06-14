@@ -1,62 +1,57 @@
+// backend/routes/invoices.js
 const express = require('express');
 const router = express.Router();
-const Medicine = require('../models/medicineArray');
 const Invoice = require('../models/Invoice');
+const Medicine = require('../models/medicineArray');
 
-router.post('/invoices', async (req, res) => {
-    const { customerName, customerAge, paymentType, medicines } = req.body;
-
-    if (!customerName || !customerAge || !paymentType || !medicines || medicines.length === 0) {
-        return res.status(400).json({ error: 'Please provide all required fields' });
-    }
-
+router.post('/addInvoice', async (req, res) => {
     try {
-        let totalAmount = 0;
-        const medicineUpdates = medicines.map(async (item) => {
-            const medicine = await Medicine.findById(item.medicine);
-            if (!medicine) {
-                throw new Error(`Medicine with ID ${item.medicine} not found`);
-            }
-            if (medicine.stock < item.amount) {
-                throw new Error(`Insufficient stock for medicine ${medicine.name}`);
-            }
+         const { customerName, customerAge, paymentType, selectedMedicines } = req.body;
 
-            medicine.stock -= item.amount;
-            totalAmount += item.amount * medicine.rate;
-            await medicine.save();
+  if (!customerName || !customerAge || !paymentType || selectedMedicines.length === 0) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
 
-            return {
-                medicine: medicine._id,
-                amount: item.amount,
-            };
-        });
+  // Assuming you have a function to validate and process medicines
+  const processedMedicines = await Promise.all(selectedMedicines.map(async (med) => {
+    const medicine = await Medicine.findById(med.id);
+    if (!medicine) throw new Error('Medicine not found');
+    return {
+      medicineId: med.id,
+      amount: med.amount,
+      price: medicine.rate,
+    };
+  }));
 
-        const updatedMedicines = await Promise.all(medicineUpdates);
+  const totalAmount = processedMedicines.reduce((acc, med) => acc + (med.amount * med.rate), 0);
 
-        const newInvoice = new Invoice({
-            customerName,
-            customerAge,
-            paymentType,
-            medicines: updatedMedicines,
-            totalAmount,
-        });
-
-        await newInvoice.save();
-
-        res.json(newInvoice);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
+  const newInvoice = new Invoice({
+    customerName,
+    customerAge,
+    paymentType,
+    medicines: processedMedicines,
+    totalAmount,
+  });
+    const savedInvoice = await newInvoice.save();
+   
+    res.status(201).json(savedInvoice);
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving invoice', error: error.message });
+  }
 });
 
-router.get('/', async (req, res) => {
-    try {
-      const invoices = await Invoice.find().populate('medicines.medicine');
-      res.json(invoices);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  });
+router.get('/allInvoices', async (req, res) => {
+  try {
+    const invoices = await Invoice.find();
+
+    res.json({
+      message: 'Invoices found',
+      data: invoices
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
 
 module.exports = router;

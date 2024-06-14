@@ -26,7 +26,8 @@ const LoginPage = () => {
       const response = await axios.post(endpoint, formData);
       localStorage.setItem('token', response.data.token);
       toast.success('Login successful');
-      navigate('/superadminhome');
+      formData.userType === 'superadmin' ?
+      navigate('/superadminhome'):navigate('/');
     } catch (error) {
       setErrorMessage('Login failed. Please try again.');
       toast.error('Login failed. Please try again.');
@@ -34,7 +35,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-r from-orange-400 to-white">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-r from-orange-400 to-white z-99">
       <div className="w-full max-w-md bg-white p-8 rounded-md shadow-lg">
         <h1 className="text-3xl font-bold mb-6 text-center text-orange-500">Login</h1>
         {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
@@ -74,9 +75,7 @@ const LoginPage = () => {
         <ToastContainer autoClose={4000} />
         <div className="mt-4 text-center">
           <span>Don't have an account? </span>
-          <Link to="/register/superadmin" className="text-orange-500 hover:underline">
-            Register here
-          </Link>
+           <p>Call 8851701738</p>
         </div>
       </div>
     </div>

@@ -47,8 +47,14 @@ app.get('/api/v1/getAllmeds',(req,res)=>{
    .then(meds =>res.json(meds) )
    .catch(err => res.json(err))
 })
-
-app.use('/api/invoices', invoiceRoutes);
+app.get('/api/v2/getAllmeds',(req,res)=>{
+  medicineModal.find({})
+ .then(meds =>res.json({
+  message: 'Got all med',
+  data: meds
+ }) )
+ .catch(err => res.json(err))
+})
 app.get("/",(req, res) => {
     medicineModal.find({})
   .then(meds =>res.json(meds) )
@@ -61,13 +67,8 @@ app.get('/getmeds/:id', (req, res) =>{
     .catch(err => res.json(err))
 })
 
-
-
 app.post("/api/medicines/addNewMedicine",   async (req, res) => {
     const { name, salt, manufacturer, rate, expiryDate, stock, shelf, use } = req.body;
-  
-
-  
     try {
       // Check if the medicine already exists
       const alreadyHave = await medicineModal.findOne({ name, manufacturer });
@@ -84,11 +85,6 @@ app.post("/api/medicines/addNewMedicine",   async (req, res) => {
     }
   });
 
-app.post("/api/generateInvoice", (req, res) => {
-    invoiceModel.create(req.body)
-        .then(invoice => res.json(invoice))
-        .catch(err => res.json(err));
-});
 
 app.put("/api/updatemedicine/:id",(req, res) => {
     const id = req.params.id;

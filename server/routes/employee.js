@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const Employee = require('../models/employee');
 const router = express.Router();
 
-router.post('/employees', async (req, res) => {
+router.post('/addEmployee', async (req, res) => {
   try {
     const { username, email, password, firstName, lastName, phoneNumber, address } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,10 +25,13 @@ router.post('/employees', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/allEmployees', async (req, res) => {
   try {
     const employees = await Employee.find();
-    res.json(employees);
+    res.json({
+      message: 'Employees found',
+      data: employees
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
