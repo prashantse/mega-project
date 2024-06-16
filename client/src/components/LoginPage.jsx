@@ -25,6 +25,7 @@ const LoginPage = () => {
       const endpoint = formData.userType === 'superadmin' ? 'http://localhost:3000/api/auth/login/superadmin' : 'http://localhost:3000/api/auth/login/employee';
       const response = await axios.post(endpoint, formData);
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userType', formData.userType ==='superadmin'?"superadmin":"employee");
       toast.success('Login successful');
       formData.userType === 'superadmin' ?
       navigate('/superadminhome'):navigate('/');
@@ -36,6 +37,7 @@ const LoginPage = () => {
 
   return (
     <div className="h-screen flex items-center justify-center bg-gradient-to-r from-orange-400 to-white z-99">
+      
       <div className="w-full max-w-md bg-white p-8 rounded-md shadow-lg">
         <h1 className="text-3xl font-bold mb-6 text-center text-orange-500">Login</h1>
         {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}

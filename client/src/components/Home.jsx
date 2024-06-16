@@ -1,9 +1,24 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+
+// import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import Search from './Search';
 
-
 export default function Home({ medicines }) {
+    const navigate = useNavigate();
+    useEffect(() => {  
+    const token = localStorage.getItem('token');
+    const storedUserType = localStorage.getItem('userType');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    if(token && storedUserType==="superadmin"){
+        navigate('/superadminhome');
+        return;
+    }
+
+}, [navigate]);
     return (
         <div className="mx-auto w-full max-w-7xl m-7" 
         style={{ backgroundImage: 'url("http://localhost:5173/src/components/Images/S_843_081110.jpg")', backgroundSize: 'cover', backgroundPosition: 'center' }}>

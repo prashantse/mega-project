@@ -1,4 +1,3 @@
-// src/components/InvoicePage.js
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import axios from 'axios';
@@ -10,7 +9,6 @@ import Select from 'react-select';
 const InvoicePage = () => {
   const [medicines, setMedicines] = useState([]);
   const navigate = useNavigate();
-  // console.log(medicines);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,12 +19,9 @@ const InvoicePage = () => {
 
     const fetchData = async () => {
       try {
-
         const medicinesResponse = await axios.get('http://localhost:3000/api/v2/getAllmeds');
-        console.log(medicinesResponse);
-        console.log(medicinesResponse.data);
-        setMedicines(medicinesResponse?.data);
-
+        console.log('Medicines response:', medicinesResponse?.data?.data);
+        setMedicines(medicinesResponse?.data?.data || []);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -37,9 +32,9 @@ const InvoicePage = () => {
 
   const { control, register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      name: '',
-      age: '',
-      paymentMethod: '',
+      customerName: '',
+      customerAge: '',
+      paymentType: '',
       selectedMedicines: [{ id: '', amount: 1 }],
     },
   });
@@ -64,10 +59,10 @@ const InvoicePage = () => {
     }
   };
 
-  const medicineOptions = medicines?.data?.map(m => ({
+  const medicineOptions = Array.isArray(medicines) ? medicines.map(m => ({
     value: m._id,
     label: `${m.name} - ${m.rate}Rs/ - ${m.stock} in stock`,
-  }));
+  })) : [];
 
   return (
     <div className='h-auto flex items-center justify-center bg-gradient-to-r from-orange-400 to-white'>
@@ -75,34 +70,34 @@ const InvoicePage = () => {
         <h1 className='text-3xl font-bold mb-6 text-center text-orange-500'>Create Invoice</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4">
           <div className="flex flex-wrap items-center">
-            <label htmlFor="name" className='text-gray-600 font-semibold w-full md:w-1/3'>Name</label>
+            <label htmlFor="customerName" className='text-gray-600 font-semibold w-full md:w-1/3'>Name</label>
             <input
               type="text"
-              id="name"
-              {...register('name', { required: 'Name is required' })}
+              id="customerName"
+              {...register('customerName', { required: 'Name is required' })}
               className='w-full md:w-2/3 p-3 border border-orange-500 rounded focus:outline-none focus:ring focus:border-orange-300'
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            {errors.customerName && <p className="text-red-500 text-sm">{errors.customerName.message}</p>}
           </div>
           <div className="flex flex-wrap items-center">
-            <label htmlFor="age" className='text-gray-600 font-semibold w-full md:w-1/3'>Age</label>
+            <label htmlFor="customerAge" className='text-gray-600 font-semibold w-full md:w-1/3'>Age</label>
             <input
               type="number"
-              id="age"
-              {...register('age', { required: 'Age is required' })}
+              id="customerAge"
+              {...register('customerAge', { required: 'Age is required' })}
               className='w-full md:w-2/3 p-3 border border-orange-500 rounded focus:outline-none focus:ring focus:border-orange-300'
             />
-            {errors.age && <p className="text-red-500 text-sm">{errors.age.message}</p>}
+            {errors.customerAge && <p className="text-red-500 text-sm">{errors.customerAge.message}</p>}
           </div>
           <div className="flex flex-wrap items-center">
-            <label htmlFor="paymentMethod" className='text-gray-600 font-semibold w-full md:w-1/3'>Payment Method</label>
+            <label htmlFor="paymentType" className='text-gray-600 font-semibold w-full md:w-1/3'>Payment Method</label>
             <input
               type="text"
-              id="paymentMethod"
-              {...register('paymentMethod', { required: 'Payment method is required' })}
+              id="paymentType"
+              {...register('paymentType', { required: 'Payment method is required' })}
               className='w-full md:w-2/3 p-3 border border-orange-500 rounded focus:outline-none focus:ring focus:border-orange-300'
             />
-            {errors.paymentMethod && <p className="text-red-500 text-sm">{errors.paymentMethod.message}</p>}
+            {errors.paymentType && <p className="text-red-500 text-sm">{errors.paymentType.message}</p>}
           </div>
           {fields.map((field, index) => (
             <div key={field.id} className="flex items-center space-x-2">
