@@ -13,10 +13,12 @@ app.use(express.json());
 const superadminRoutes = require('./routes/superadmin');
 const employeeRoutes = require('./routes/employee');
 const authRoutes = require('./routes/auth');
+const concerns = require('./routes/concerns');
 
 app.use('/api/superadmin', superadminRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/concern', concerns);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/invoices', invoiceRoutes);
  

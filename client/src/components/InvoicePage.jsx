@@ -91,12 +91,16 @@ const InvoicePage = () => {
           </div>
           <div className="flex flex-wrap items-center">
             <label htmlFor="paymentType" className='text-gray-600 font-semibold w-full md:w-1/3'>Payment Method</label>
-            <input
-              type="text"
+            <select
               id="paymentType"
               {...register('paymentType', { required: 'Payment method is required' })}
               className='w-full md:w-2/3 p-3 border border-orange-500 rounded focus:outline-none focus:ring focus:border-orange-300'
-            />
+            >
+              <option value="">Select payment type</option>
+              <option value="cash">Cash</option>
+              <option value="credit card">Credit Card</option>
+              <option value="UPI">UPI</option>
+            </select>
             {errors.paymentType && <p className="text-red-500 text-sm">{errors.paymentType.message}</p>}
           </div>
           {fields.map((field, index) => (
@@ -136,7 +140,7 @@ const InvoicePage = () => {
           </div>
         </form>
       </div>
-      <ToastContainer autoClose={4000} />
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

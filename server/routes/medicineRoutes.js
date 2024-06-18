@@ -19,7 +19,7 @@ router.post('/addNewMedicine', async (req, res) => {
   }
 
   try {
-    const alreadyHave = await medicineModel.findOne({ name, salt, manufacturer });
+    const alreadyHave = await medicineModel.findOne({ name, manufacturer });
 
     if (alreadyHave) {
       return res.status(400).json({ error: 'Medicine already exists' });

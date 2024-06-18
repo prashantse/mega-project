@@ -20,7 +20,7 @@ router.post('/addInvoice', async (req, res) => {
       if (newStock < 0) throw new Error(`Insufficient stock for medicine: ${medicine.name}`);
       medicine.stock = newStock;
       await medicine.save();
-      
+
       return {
         medicine: med.id,
         medicineName: medicine.name,
@@ -42,13 +42,31 @@ router.post('/addInvoice', async (req, res) => {
     const savedInvoice = await newInvoice.save();
     res.status(201).json(savedInvoice);
   } catch (error) {
-    res.status(500).json({ message: 'Error saving invoice', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
+router.get('/getAllInvoices', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const invoices = await Invoice.find().sort({ date: -1 });
+    const totalInvoices = await Invoice.countDocuments();
+
+    res.json({
+      invoices,
+      totalPages: Math.ceil(totalInvoices / limit),
+      currentPage: page,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 router.get('/allInvoices', async (req, res) => {
   try {
-    const invoices = await Invoice.find();
+    const invoices = await Invoice.find().sort({date: -1});
 
     res.json({
       message: 'Invoices found',
@@ -59,5 +77,18 @@ router.get('/allInvoices', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 })
+
+router.get('/invoices/:id', async (req, res) => {
+  try {
+    const invoice = await Invoice.findById(req.params.id);
+    if (!invoice) {
+      return res.status(404).json({ message: 'Invoice not found' });
+    }
+    res.status(200).json({ invoice });
+  } catch (error) {
+    console.error('Error fetching invoice:', error);
+    res.status(500).json({ message: 'Failed to fetch invoice' });
+  }
+});
 
 module.exports = router;

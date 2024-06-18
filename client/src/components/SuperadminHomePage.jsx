@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import Search from './Search';
+import Modal from './Modal';
 
 const SuperadminHomePage = () => {
   const [employees, setEmployees] = useState([]);
@@ -11,6 +12,9 @@ const SuperadminHomePage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState('');
   const [searchMeds, setSearchMeds] = useState([]);
+  const [employeeSearch, setEmployeeSearch] = useState('');
+  const [invoiceSearch, setInvoiceSearch] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -62,7 +66,21 @@ const SuperadminHomePage = () => {
 
   const handleInvoiceClick = (invoice) => {
     setSelectedInvoice(invoice);
+    setShowModal(true);
   };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedInvoice(null);
+  };
+
+  const filteredEmployees = employees?.data?.filter(employee => 
+    `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(employeeSearch.toLowerCase())
+  );
+
+  const filteredInvoices = invoices?.data?.filter(invoice => 
+    invoice.customerName.toLowerCase().includes(invoiceSearch.toLowerCase())
+  );
 
   return (
     <div className="p-6 bg-white shadow-md rounded-md">
@@ -88,6 +106,13 @@ const SuperadminHomePage = () => {
       <Search medicines={searchMeds} />
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Employees</h2>
+        <input
+          type="text"
+          placeholder="Search Employees"
+          value={employeeSearch}
+          onChange={(e) => setEmployeeSearch(e.target.value)}
+          className="p-2 border border-orange-500 rounded"
+        />
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
@@ -101,7 +126,7 @@ const SuperadminHomePage = () => {
             </tr>
           </thead>
           <tbody>
-            {employees?.data?.map(employee => (
+            {filteredEmployees?.map(employee => (
               <tr key={employee._id}>
                 <td className="py-2 px-4 border-b border-gray-200">{employee.firstName}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{employee.lastName}</td>
@@ -113,7 +138,16 @@ const SuperadminHomePage = () => {
           </tbody>
         </table>
       </div>
-      <h2 className="text-2xl font-semibold mb-4 mt-8">Invoices</h2>
+      <div className="flex justify-between items-center mb-6 mt-8">
+        <h2 className="text-2xl font-semibold">Invoices</h2>
+        <input
+          type="text"
+          placeholder="Search Invoices"
+          value={invoiceSearch}
+          onChange={(e) => setInvoiceSearch(e.target.value)}
+          className="p-2 border border-orange-500 rounded"
+        />
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead>
@@ -125,37 +159,47 @@ const SuperadminHomePage = () => {
             </tr>
           </thead>
           <tbody>
-            {invoices?.data?.map(invoice => (
+            {filteredInvoices?.map(invoice => (
               <tr key={invoice._id} onClick={() => handleInvoiceClick(invoice)} className="cursor-pointer">
                 <td className="py-2 px-4 border-b border-gray-200">{invoice.customerName}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{invoice.customerAge}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{invoice.paymentType}</td>
-                <td className="py-2 px-4 border-b border-gray-200">${invoice.totalAmount}</td>
+                <td className="py-2 px-4 border-b border-gray-200">Rs.{invoice.totalAmount}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {selectedInvoice && (
-        <div className="mt-8 p-4 bg-gray-100 rounded-md">
-          <h3 className="text-xl font-semibold mb-4">Invoice Details</h3>
-          <p><strong>Customer Name:</strong> {selectedInvoice.customerName}</p>
-          <p><strong>Customer Age:</strong> {selectedInvoice.customerAge}</p>
-          <p><strong>Payment Type:</strong> {selectedInvoice.paymentType}</p>
-          <p><strong>Total Amount:</strong> ${selectedInvoice.totalAmount}</p>
-          <p><strong>Date:</strong> {new Date(selectedInvoice.date).toLocaleString()}</p>
-          <h4 className="text-lg font-semibold mt-4">Medicines</h4>
-          <ul className="list-disc ml-6">
-            {selectedInvoice.medicines.map((medicine, index) => (
-              <li key={index}>
-                <p><strong>Medicine Name:</strong> {medicine.medicineName}</p>
-                <p><strong>Amount:</strong> {medicine.amount}</p>
-                <p><strong>Price:</strong> ${medicine.price}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <Modal show={showModal} onClose={handleCloseModal}>
+        {selectedInvoice && (
+          <div className="p-4">
+            <h3 className="text-xl font-semibold mb-4">Invoice Details</h3>
+            <p><strong>Customer Name:</strong> {selectedInvoice.customerName}</p>
+            <p><strong>Customer Age:</strong> {selectedInvoice.customerAge}</p>
+            <p><strong>Payment Type:</strong> {selectedInvoice.paymentType}</p>
+            <p><strong>Total Amount:</strong> Rs.{selectedInvoice.totalAmount}</p>
+            <p><strong>Date:</strong> {new Date(selectedInvoice.date).toLocaleString()}</p>
+            <h4 className="text-lg font-semibold mt-4">Medicines</h4>
+            <ul className="list-disc ml-6">
+              {selectedInvoice.medicines.map((medicine, index) => (
+                <li key={index}>
+                  <p><strong>Medicine Name:</strong> {medicine.medicineName}</p>
+                  <p><strong>Amount:</strong> {medicine.amount}</p>
+                  <p><strong>Price:</strong> Rs.{medicine.price}</p>
+                </li>
+              ))}
+            </ul>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={handleCloseModal}
+                className="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

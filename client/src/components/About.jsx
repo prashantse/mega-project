@@ -1,35 +1,33 @@
-
 export default function About() {
     return (
         <div className="py-16 bg-white">
-            <div className="container m-auto px-6 text-gray-600 md:px-12 xl:px-6">
+            <div className="container mx-auto px-6 text-gray-600 md:px-12 xl:px-6">
                 <div className="space-y-6 md:space-y-0 md:flex md:gap-6 lg:items-center lg:gap-12">
-                    <div className="md:5/12 lg:w-5/12">
-                        <img className="photoo"
+                    <div className="md:w-5/12">
+                        <img className="rounded-lg shadow-lg"
                             src="https://tailus.io/sources/blocks/left-image/preview/images/startup.png"
                             alt="image"
                         />
                     </div>
-                    <div className="md:7/12 lg:w-6/12">
-                        <h2 className="text-2xl text-gray-900 font-bold md:text-4xl">
-                RxRelief : A better way to manage your Pharmacy Store
+                    <div className="md:w-7/12">
+                        <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
+                            RxRelief: A Better Way to Manage Your Pharmacy Store
                         </h2>
                         <p className="mt-6 text-gray-600">
-                RxRelief, a web app built for pharmacies, removes the stress of inventory management. Stay informed with low stock alerts and expiry date tracking, all while easily updating existing medicine details and adding new ones. Manage your inventory efficiently, anywhere, anytime, and say goodbye to stockouts and wasted medication.
+                            RxRelief, a web app designed for pharmacies, simplifies inventory management by providing essential features such as low stock alerts and expiry date tracking. Update existing medicine details and add new ones effortlessly, ensuring efficient inventory control from anywhere, anytime.
                         </p>
-                        <h4 className="text-xl text-gray-900 font-bold md:text-4xl">
-                         Key Features
-                        </h4>
-                        <p className="mt-4 text-gray-600">
-                            <ul >
+                        <div className="mt-8">
+                            <h4 className="text-xl md:text-3xl font-bold text-gray-900">
+                                Key Features
+                            </h4>
+                            <ul className="list-disc list-inside mt-4 text-gray-600">
                                 <li>Low stock alerts for medicines.</li>
-                                <li>Expiry date tracking to prevent wasted medicatio</li>
+                                <li>Expiry date tracking to prevent wasted medication.</li>
                                 <li>Easy updates for existing medicine details.</li>
                                 <li>Effortless addition of new medicines to the inventory.</li>
                                 <li>Accessible from anywhere for remote inventory management.</li>
                             </ul>
-                        </p>
-                        
+                        </div>
                     </div>
                 </div>
             </div>

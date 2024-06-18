@@ -36,7 +36,22 @@ const LoginPage = () => {
   };
 
   return (
+    <div>
+    <header className="shadow sticky z-10 top-0 photoo border-b-2 header-show">
+    <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5">
+      <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+        <Link  className="flex items-center">
+          <img
+            src="http://localhost:5173/src/components/Images/Newlogominiproject.png"
+            className="mr-3 h-12"
+            alt="Logo"
+          />
+        </Link>
+      </div>
+    </nav>
+  </header>
     <div className="h-screen flex items-center justify-center bg-gradient-to-r from-orange-400 to-white z-99">
+      
       
       <div className="w-full max-w-md bg-white p-8 rounded-md shadow-lg">
         <h1 className="text-3xl font-bold mb-6 text-center text-orange-500">Login</h1>
@@ -80,6 +95,7 @@ const LoginPage = () => {
            <p>Call 8851701738</p>
         </div>
       </div>
+    </div>
     </div>
   );
 };

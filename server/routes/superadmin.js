@@ -17,20 +17,6 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-// Superadmin home - get all employees and invoices
-router.get('/home', verifyToken, async (req, res) => {
-  try {
-    if (req.user.role !== 'superadmin') {
-      return res.status(403).send('Access Denied');
-    }
-
-    const employees = await Employee.find();
-    const invoices = await Invoice.find(); // Assuming Invoice model is defined
-    res.json({ employees, invoices });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 router.post('/employee', verifyToken, async (req, res) => {
   try {

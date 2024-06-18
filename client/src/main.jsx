@@ -25,6 +25,7 @@ import AddEmployee from './components/AddEmployeePage.jsx';
 import SuperadminHomePage from './components/SuperadminHomePage';
 import InvoiceSuccess from './components/InvoiceSuccess.jsx';
 import Header2 from './components/Header2.jsx';
+import Invoices from './components/Invoices.jsx';
 // import image from './components/Images/agra_bg.jpeg';
 
 
@@ -61,6 +62,7 @@ const Main = () => {
           <Route path="/add-employee" element={<AddEmployee />} />
           <Route path="/invoice-success" element={<InvoiceSuccess />} />
           <Route path="/header2" element={<Header2/>} />
+          <Route path="/invoices" element={<Invoices/>} />
         <Route path='*' element={<h1>404 Not Found</h1>} />
       </Route>
       
